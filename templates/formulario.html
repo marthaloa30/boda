@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Confirmar asistencia - Mariana & Luis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Mariana & Luis</h1>
+      <p class="frase">
+        “Tres hilos tejen nuestra historia: Dios y nosotros, un lazo irrompible
+        de amor.”
+      </p>
+      <form action="/registrar" method="POST">
+        <label>Nombre y apellido de quien(es) asistirá(n):</label>
+        <input type="text" name="nombre" required />
+
+        <label>Correo electrónico:</label>
+        <input type="email" name="correo" required />
+
+        <label>¿Asistirás a la ceremonia?</label>
+        <div class="radio-group">
+          <label
+            ><input type="radio" name="ceremonia" value="Sí" required />
+            Sí</label
+          >
+          <label
+            ><input type="radio" name="ceremonia" value="No" required />
+            No</label
+          >
+        </div>
+
+        <label>¿Tienes algún comentario?</label>
+        <textarea name="comentarios" rows="3"></textarea>
+
+        <button type="submit">Confirmar asistencia</button>
+      </form>
+    </div>
+  </body>
+</html>

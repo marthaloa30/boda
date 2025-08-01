@@ -1,0 +1,140 @@
+body {
+  background-color: #556b2f; /* verde olivo */
+  color: #000;
+  font-family: "Playfair Display", serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 700px;
+  margin: 50px auto;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  border: 3px solid #bfa046; /* dorado */
+}
+
+h1 {
+  text-align: center;
+  color: #bfa046;
+  font-size: 36px;
+  margin-bottom: 5px;
+  font-weight: 700;
+  font-style: italic; /* da un toque elegante */
+  letter-spacing: 1.5px;
+}
+
+.frase {
+  text-align: center;
+  font-style: italic;
+  margin-bottom: 25px;
+  color: #333;
+  font-family: "Playfair Display", serif;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+}
+
+form label {
+  display: block;
+  margin-top: 15px;
+  font-weight: 600;
+  font-family: "Playfair Display", serif;
+}
+button {
+  margin-top: 20px;
+  background-color: #bfa046; /* dorado */
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 18px;
+  font-family: "Playfair Display", serif;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #a68e2a;
+}
+
+input[type="text"],
+input[type="email"],
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.radio-group {
+  margin-top: 5px;
+  display: flex;
+  gap: 15px;
+}
+
+button {
+  margin-top: 20px;
+  background-color: #bfa046; /* dorado */
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+table,
+th,
+td {
+  border: 1px solid #aaa;
+}
+
+th,
+td {
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background-color: #eee;
+  color: #000;
+}
+
+.descargar {
+  display: inline-block;
+  background-color: #bfa046;
+  color: white;
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.boton {
+  display: inline-block;
+  background-color: #bfa046; /* mismo dorado */
+  color: white;
+  padding: 10px 20px;
+  margin-top: 20px;
+  margin-right: 10px;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 700;
+  font-family: "Playfair Display", serif;
+  transition: background-color 0.3s ease;
+}
+
+.boton:hover {
+  background-color: #a68e2a;
+}
