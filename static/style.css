@@ -121,6 +121,26 @@ th {
 /* Botón estilo enlace */
 .boton {
   display: inline-block;
+  background-color: #bfa046; /* mismo dorado */
+  color: white;
+  padding: 10px 20px;
+  margin-top: 20px;
+  margin-right: 10px;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 700;
+  font-family: "Playfair Display", serif;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+/* Añade esto para centrar cualquier botón envuelto */
+.centrado {
+  text-align: center;
+}
+
+.boton {
+  display: inline-block;
   background-color: #bfa046;
   color: white;
   padding: 10px 20px;
@@ -159,6 +179,7 @@ th {
     padding: 14px;
     font-size: 16px;
     margin-right: 0;
+    alig
   }
 
   .radio-group {
