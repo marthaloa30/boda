@@ -20,6 +20,7 @@
           <th>Correo</th>
           <th>Ceremonia</th>
           <th>Comentarios</th>
+          <th>Confirmación</th>
         </tr>
         {% for i in invitados %}
         <tr>
@@ -27,10 +28,13 @@
           <td>{{ i[1] }}</td>
           <td>{{ i[2] }}</td>
           <td>{{ i[3] }}</td>
+          <td>{{ i[4] }}</td>
         </tr>
         {% endfor %}
       </table>
-      <a href="/" class="boton">Volver al formulario</a>
+      <a href="{{ url_for('formulario') }}" class="boton"
+        >Volver al formulario</a
+      >
     </div>
   </body>
 </html>

@@ -8,7 +8,6 @@ import os
 USUARIO_ADMIN = "novios"
 CONTRASENA_ADMIN = "123bodita"
 
-# Render te da la URL de la base de datos en la variable DATABASE_URL
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 app = Flask(__name__)
@@ -28,9 +27,12 @@ def requiere_autenticacion(f):
         return f(*args, **kwargs)
     return decorada
 
-# Crear tabla si no existe
-def init_db():
+def get_db_connection():
     conn = psycopg2.connect(DATABASE_URL)
+    return conn
+
+def init_db():
+    conn = get_db_connection()
     c = conn.cursor()
     c.execute('''
         CREATE TABLE IF NOT EXISTS invitados (
@@ -43,6 +45,7 @@ def init_db():
         )
     ''')
     conn.commit()
+    c.close()
     conn.close()
 
 init_db()
@@ -50,10 +53,11 @@ init_db()
 @app.route('/admin')
 @requiere_autenticacion
 def admin():
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     c = conn.cursor()
-    c.execute('SELECT nombre, correo, ceremonia, comentarios FROM invitados')
+    c.execute('SELECT nombre, correo, ceremonia, comentarios, confirmacion FROM invitados ORDER BY id DESC')
     datos = c.fetchall()
+    c.close()
     conn.close()
     return render_template('admin.html', invitados=datos)
 
@@ -66,22 +70,25 @@ def registrar():
     nombre = request.form['nombre']
     correo = request.form['correo']
     ceremonia = request.form['ceremonia']
-    comentarios = request.form['comentarios']
+    comentarios = request.form.get('comentarios', '')
     confirmacion = request.form.get('confirmacion', 'No')
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     c = conn.cursor()
-    c.execute("INSERT INTO invitados (nombre, correo, ceremonia, comentarios, confirmacion) VALUES (%s, %s, %s, %s, %s)",
-              (nombre, correo, ceremonia, comentarios, confirmacion))
+    c.execute(
+        "INSERT INTO invitados (nombre, correo, ceremonia, comentarios, confirmacion) VALUES (%s, %s, %s, %s, %s)",
+        (nombre, correo, ceremonia, comentarios, confirmacion)
+    )
     conn.commit()
+    c.close()
     conn.close()
     return redirect(url_for('gracias'))
 
 @app.route('/lista')
 def ver_lista():
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     c = conn.cursor()
-    c.execute('SELECT nombre, correo, ceremonia, comentarios, confirmacion FROM invitados')
+    c.execute('SELECT nombre, correo, ceremonia, comentarios, confirmacion FROM invitados ORDER BY id DESC')
     invitados = c.fetchall()
 
     c.execute("SELECT COUNT(*) FROM invitados WHERE confirmacion = 'Sí'")
@@ -90,29 +97,32 @@ def ver_lista():
     c.execute("SELECT COUNT(*) FROM invitados WHERE confirmacion = 'No'")
     no_count = c.fetchone()[0]
 
+    c.close()
     conn.close()
     return render_template('lista.html', invitados=invitados, si_count=si_count, no_count=no_count)
-
 
 @app.route('/descargar')
 @requiere_autenticacion
 def descargar_csv():
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     c = conn.cursor()
-    c.execute('SELECT * FROM invitados')
+    c.execute('SELECT * FROM invitados ORDER BY id DESC')
     datos = c.fetchall()
+    c.close()
     conn.close()
 
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(['ID', 'Nombre', 'Correo', 'Ceremonia', 'Comentarios'])
+    writer.writerow(['ID', 'Nombre', 'Correo', 'Ceremonia', 'Comentarios', 'Confirmación'])
     writer.writerows(datos)
     output.seek(0)
 
-    return send_file(io.BytesIO(output.read().encode('utf-8')),
-                     mimetype='text/csv',
-                     download_name='invitados.csv',
-                     as_attachment=True)
+    return send_file(
+        io.BytesIO(output.read().encode('utf-8')),
+        mimetype='text/csv',
+        download_name='invitados.csv',
+        as_attachment=True
+    )
 
 @app.route('/gracias')
 def gracias():
