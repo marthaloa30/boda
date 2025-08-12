@@ -1,6 +1,6 @@
 body {
   background-image: url("/static/novios.jpg"); /* reemplaza con el nombre real */
-  background-repeat: no-repeat;
+  background-repeat: repeat;
   background-position: center center;
   background-size: cover;
   background-attachment: fixed;
