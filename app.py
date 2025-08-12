@@ -77,17 +77,21 @@ def registrar():
 def ver_lista():
     conn = psycopg2.connect(DATABASE_URL)
     c = conn.cursor()
+    
+    # Traer todos los invitados
     c.execute('SELECT nombre, correo, ceremonia, comentarios FROM invitados')
     invitados = c.fetchall()
 
-    # Contar cuantos dijeron Sí y No en ceremonia
-    c.execute("SELECT COUNT(*) FROM invitados WHERE ceremonia = 'Sí'")
+    # Contar cuántos sí y no para ceremonia (usar ILIKE para evitar problemas con mayúsculas/minúsculas)
+    c.execute("SELECT COUNT(*) FROM invitados WHERE ceremonia ILIKE 'sí'")
     si_ceremonia = c.fetchone()[0]
 
-    c.execute("SELECT COUNT(*) FROM invitados WHERE ceremonia = 'No'")
+    c.execute("SELECT COUNT(*) FROM invitados WHERE ceremonia ILIKE 'no'")
     no_ceremonia = c.fetchone()[0]
 
+    c.close()
     conn.close()
+    
     return render_template('lista.html', invitados=invitados, si_ceremonia=si_ceremonia, no_ceremonia=no_ceremonia)
 
 
