@@ -79,8 +79,17 @@ def ver_lista():
     c = conn.cursor()
     c.execute('SELECT nombre, correo, ceremonia, comentarios FROM invitados')
     invitados = c.fetchall()
+
+    # Contar cuantos dijeron Sí y No en ceremonia
+    c.execute("SELECT COUNT(*) FROM invitados WHERE ceremonia = 'Sí'")
+    si_ceremonia = c.fetchone()[0]
+
+    c.execute("SELECT COUNT(*) FROM invitados WHERE ceremonia = 'No'")
+    no_ceremonia = c.fetchone()[0]
+
     conn.close()
-    return render_template('lista.html', invitados=invitados)
+    return render_template('lista.html', invitados=invitados, si_ceremonia=si_ceremonia, no_ceremonia=no_ceremonia)
+
 
 @app.route('/descargar')
 @requiere_autenticacion
