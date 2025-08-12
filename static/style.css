@@ -1,9 +1,10 @@
 /* Estilo base */
 body {
   background-image: url("/static/novios.jpg"); /* ruta a tu imagen */
-  background-size: cover; /* para que la imagen cubra todo el fondo */
-  background-position: center; /* para centrar la imagen */
-  background-repeat: no-repeat; /* para que no se repita */
+  background-repeat: repeat; /* la imagen se repetirá en ambas direcciones */
+  background-position: top left; /* opcional, la imagen inicia desde arriba a la izquierda */
+  background-size: auto; /* mantén tamaño original para repetir */
+  background-color: transparent !important;
   color: #000;
   font-family: "Playfair Display", serif;
   margin: 0;
