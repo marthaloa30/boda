@@ -106,5 +106,16 @@ def descargar_csv():
 def gracias():
     return render_template('gracias.html')
 
+@app.route('/limpiar')
+@requiere_autenticacion  # Solo que los novios puedan usarla
+def limpiar():
+    conn = psycopg2.connect(DATABASE_URL)
+    c = conn.cursor()
+    c.execute("DELETE FROM invitados")
+    conn.commit()
+    conn.close()
+    return "Base de datos limpiada exitosamente."
+
+
 if __name__ == '__main__':
     app.run(debug=True)
