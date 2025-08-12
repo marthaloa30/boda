@@ -8,7 +8,7 @@ import os
 USUARIO_ADMIN = "novios"
 CONTRASENA_ADMIN = "123bodita"
 
-DATABASE_URL = os.getenv("DATABASE_URL")  # Asegúrate de que esta variable esté definida en tu entorno
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 app = Flask(__name__)
 
@@ -36,12 +36,10 @@ def init_db():
             nombre TEXT NOT NULL,
             correo TEXT NOT NULL,
             ceremonia TEXT NOT NULL,
-            comentarios TEXT,
-            confirmacion TEXT NOT NULL DEFAULT 'No'
+            comentarios TEXT
         )
     ''')
     conn.commit()
-    c.close()
     conn.close()
 
 init_db()
@@ -51,9 +49,8 @@ init_db()
 def admin():
     conn = psycopg2.connect(DATABASE_URL)
     c = conn.cursor()
-    c.execute('SELECT nombre, correo, ceremonia, comentarios, confirmacion FROM invitados')
+    c.execute('SELECT nombre, correo, ceremonia, comentarios FROM invitados')
     datos = c.fetchall()
-    c.close()
     conn.close()
     return render_template('admin.html', invitados=datos)
 
@@ -63,41 +60,27 @@ def formulario():
 
 @app.route('/registrar', methods=['POST'])
 def registrar():
-    try:
-        nombre = request.form['nombre']
-        correo = request.form['correo']
-        ceremonia = request.form['ceremonia']
-        comentarios = request.form.get('comentarios', '')
-        confirmacion = request.form.get('confirmacion', 'No')
+    nombre = request.form['nombre']
+    correo = request.form['correo']
+    ceremonia = request.form['ceremonia']
+    comentarios = request.form['comentarios']
 
-        conn = psycopg2.connect(DATABASE_URL)
-        c = conn.cursor()
-        c.execute("INSERT INTO invitados (nombre, correo, ceremonia, comentarios, confirmacion) VALUES (%s, %s, %s, %s, %s)",
-                  (nombre, correo, ceremonia, comentarios, confirmacion))
-        conn.commit()
-        c.close()
-        conn.close()
-        return redirect(url_for('gracias'))
-    except Exception as e:
-        # Mostrar error simple para debug, pero en producción deberías manejarlo mejor
-        return f"Error al registrar la asistencia: {e}", 500
+    conn = psycopg2.connect(DATABASE_URL)
+    c = conn.cursor()
+    c.execute("INSERT INTO invitados (nombre, correo, ceremonia, comentarios) VALUES (%s, %s, %s, %s)",
+              (nombre, correo, ceremonia, comentarios))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('gracias'))
 
 @app.route('/lista')
 def ver_lista():
     conn = psycopg2.connect(DATABASE_URL)
     c = conn.cursor()
-    c.execute('SELECT nombre, correo, ceremonia, comentarios, confirmacion FROM invitados')
+    c.execute('SELECT nombre, correo, ceremonia, comentarios FROM invitados')
     invitados = c.fetchall()
-
-    c.execute("SELECT COUNT(*) FROM invitados WHERE confirmacion = 'Sí'")
-    si_count = c.fetchone()[0]
-
-    c.execute("SELECT COUNT(*) FROM invitados WHERE confirmacion = 'No'")
-    no_count = c.fetchone()[0]
-
-    c.close()
     conn.close()
-    return render_template('lista.html', invitados=invitados, si_count=si_count, no_count=no_count)
+    return render_template('lista.html', invitados=invitados)
 
 @app.route('/descargar')
 @requiere_autenticacion
@@ -106,12 +89,11 @@ def descargar_csv():
     c = conn.cursor()
     c.execute('SELECT * FROM invitados')
     datos = c.fetchall()
-    c.close()
     conn.close()
 
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(['ID', 'Nombre', 'Correo', 'Ceremonia', 'Comentarios', 'Confirmación'])
+    writer.writerow(['ID', 'Nombre', 'Correo', 'Ceremonia', 'Comentarios'])
     writer.writerows(datos)
     output.seek(0)
 
@@ -123,6 +105,6 @@ def descargar_csv():
 @app.route('/gracias')
 def gracias():
     return render_template('gracias.html')
-    
+
 if __name__ == '__main__':
     app.run(debug=True)
