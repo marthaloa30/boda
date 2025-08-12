@@ -1,23 +1,13 @@
-/* Estilo base */
 body {
-  background-image: url("/static/tu-imagen.jpg"); /* cambia a tu imagen */
-  background-repeat: repeat;
-  background-position: top left;
+  background-image: url("/static/tu-imagen.jpg"); /* tu imagen */
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
   background-attachment: fixed;
-  background-color: #556b2f;
   color: #000;
   font-family: "Playfair Display", serif;
   margin: 0;
   padding: 0;
-  background-size: 50px 50px; /* tamaño mosaico para desktop */
-}
-
-/* Para pantallas pequeñas (móviles) */
-@media (max-width: 600px) {
-  body {
-    background-size: 30px 30px; /* mosaico más pequeño para móvil */
-    background-attachment: scroll; /* evita problemas de scroll fijo en móvil */
-  }
 }
 
 /* Contenedor central */
