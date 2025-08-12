@@ -1,6 +1,9 @@
 /* Estilo base */
 body {
-  background-color: #556b2f; /* verde olivo */
+  background-image: url("/static/novios.jpg"); /* ruta a tu imagen */
+  background-size: cover; /* para que la imagen cubra todo el fondo */
+  background-position: center; /* para centrar la imagen */
+  background-repeat: no-repeat; /* para que no se repita */
   color: #000;
   font-family: "Playfair Display", serif;
   margin: 0;
@@ -121,26 +124,6 @@ th {
 /* Botón estilo enlace */
 .boton {
   display: inline-block;
-  background-color: #bfa046; /* mismo dorado */
-  color: white;
-  padding: 10px 20px;
-  margin-top: 20px;
-  margin-right: 10px;
-  text-decoration: none;
-  border-radius: 6px;
-  font-weight: 700;
-  font-family: "Playfair Display", serif;
-  transition: background-color 0.3s ease;
-  text-align: center;
-}
-
-/* Añade esto para centrar cualquier botón envuelto */
-.centrado {
-  text-align: center;
-}
-
-.boton {
-  display: inline-block;
   background-color: #bfa046;
   color: white;
   padding: 10px 20px;
@@ -179,7 +162,6 @@ th {
     padding: 14px;
     font-size: 16px;
     margin-right: 0;
-    alig
   }
 
   .radio-group {
