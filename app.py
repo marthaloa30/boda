@@ -1,13 +1,15 @@
-from flask import Flask, render_template, request, redirect, url_for, send_file
-import sqlite3
+from flask import Flask, render_template, request, redirect, url_for, send_file, Response
+import psycopg2
 import csv
 import io
 from functools import wraps
-from flask import Response, request
+import os
 
 USUARIO_ADMIN = "novios"
 CONTRASENA_ADMIN = "123bodita"
 
+# Render te da la URL de la base de datos en la variable DATABASE_URL
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 app = Flask(__name__)
 
@@ -26,14 +28,13 @@ def requiere_autenticacion(f):
         return f(*args, **kwargs)
     return decorada
 
-
 # Crear tabla si no existe
 def init_db():
-    conn = sqlite3.connect('invitados.db')
+    conn = psycopg2.connect(DATABASE_URL)
     c = conn.cursor()
     c.execute('''
         CREATE TABLE IF NOT EXISTS invitados (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             nombre TEXT NOT NULL,
             correo TEXT NOT NULL,
             ceremonia TEXT NOT NULL,
@@ -48,13 +49,12 @@ init_db()
 @app.route('/admin')
 @requiere_autenticacion
 def admin():
-    conn = sqlite3.connect('invitados.db')
+    conn = psycopg2.connect(DATABASE_URL)
     c = conn.cursor()
     c.execute('SELECT nombre, correo, ceremonia, comentarios FROM invitados')
     datos = c.fetchall()
     conn.close()
     return render_template('admin.html', invitados=datos)
-
 
 @app.route('/')
 def formulario():
@@ -67,9 +67,9 @@ def registrar():
     ceremonia = request.form['ceremonia']
     comentarios = request.form['comentarios']
 
-    conn = sqlite3.connect('invitados.db')
+    conn = psycopg2.connect(DATABASE_URL)
     c = conn.cursor()
-    c.execute("INSERT INTO invitados (nombre, correo, ceremonia,  comentarios) VALUES (?, ?, ?, ?)",
+    c.execute("INSERT INTO invitados (nombre, correo, ceremonia, comentarios) VALUES (%s, %s, %s, %s)",
               (nombre, correo, ceremonia, comentarios))
     conn.commit()
     conn.close()
@@ -77,7 +77,7 @@ def registrar():
 
 @app.route('/lista')
 def ver_lista():
-    conn = sqlite3.connect('invitados.db')
+    conn = psycopg2.connect(DATABASE_URL)
     c = conn.cursor()
     c.execute('SELECT nombre, correo, ceremonia, comentarios FROM invitados')
     datos = c.fetchall()
@@ -87,7 +87,7 @@ def ver_lista():
 @app.route('/descargar')
 @requiere_autenticacion
 def descargar_csv():
-    conn = sqlite3.connect('invitados.db')
+    conn = psycopg2.connect(DATABASE_URL)
     c = conn.cursor()
     c.execute('SELECT * FROM invitados')
     datos = c.fetchall()
@@ -107,7 +107,6 @@ def descargar_csv():
 @app.route('/gracias')
 def gracias():
     return render_template('gracias.html')
-
 
 if __name__ == '__main__':
     app.run(debug=True)
