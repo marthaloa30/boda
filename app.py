@@ -38,7 +38,8 @@ def init_db():
             nombre TEXT NOT NULL,
             correo TEXT NOT NULL,
             ceremonia TEXT NOT NULL,
-            comentarios TEXT
+            comentarios TEXT,
+            confirmacion TEXT NOT NULL DEFAULT 'No'
         )
     ''')
     conn.commit()
@@ -66,11 +67,12 @@ def registrar():
     correo = request.form['correo']
     ceremonia = request.form['ceremonia']
     comentarios = request.form['comentarios']
+    confirmacion = request.form.get('confirmacion', 'No')
 
     conn = psycopg2.connect(DATABASE_URL)
     c = conn.cursor()
-    c.execute("INSERT INTO invitados (nombre, correo, ceremonia, comentarios) VALUES (%s, %s, %s, %s)",
-              (nombre, correo, ceremonia, comentarios))
+    c.execute("INSERT INTO invitados (nombre, correo, ceremonia, comentarios, confirmacion) VALUES (%s, %s, %s, %s, %s)",
+              (nombre, correo, ceremonia, comentarios, confirmacion))
     conn.commit()
     conn.close()
     return redirect(url_for('gracias'))
@@ -79,10 +81,18 @@ def registrar():
 def ver_lista():
     conn = psycopg2.connect(DATABASE_URL)
     c = conn.cursor()
-    c.execute('SELECT nombre, correo, ceremonia, comentarios FROM invitados')
-    datos = c.fetchall()
+    c.execute('SELECT nombre, correo, ceremonia, comentarios, confirmacion FROM invitados')
+    invitados = c.fetchall()
+
+    c.execute("SELECT COUNT(*) FROM invitados WHERE confirmacion = 'Sí'")
+    si_count = c.fetchone()[0]
+
+    c.execute("SELECT COUNT(*) FROM invitados WHERE confirmacion = 'No'")
+    no_count = c.fetchone()[0]
+
     conn.close()
-    return render_template('lista.html', invitados=datos)
+    return render_template('lista.html', invitados=invitados, si_count=si_count, no_count=no_count)
+
 
 @app.route('/descargar')
 @requiere_autenticacion
